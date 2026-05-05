@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard | ZeroBase</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Browse</a>
+          <a class="active" href="dashboard.html">Dashboard</a>
+          <a href="verify.html">Verify Record</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="section-card grid-2">
+        <div>
+          <h2>Saved Training Programs</h2>
+          <ul id="savedList" class="list"></ul>
+        </div>
+        <div>
+          <h2>Applications</h2>
+          <ul id="applicationsList" class="list"></ul>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h2>Alerts Subscription</h2>
+        <form id="alertsForm" class="filters">
+          <select id="alertCategory">
+            <option value="">All Categories</option>
+            <option>AI</option><option>Web Development</option><option>Cybersecurity</option><option>Data Analysis</option><option>Cloud</option><option>Mobile</option>
+          </select>
+          <select id="alertCity">
+            <option value="">All Cities</option>
+            <option>Cairo</option><option>Giza</option><option>Alexandria</option><option>Mansoura</option><option>Aswan</option><option>Tanta</option>
+          </select>
+          <button type="submit">Save Alert Settings</button>
+        </form>
+      </section>
+
+      <section class="section-card">
+        <h2>Notifications Settings (UI)</h2>
+        <label><input type="checkbox" checked /> Push notifications</label><br />
+        <label><input type="checkbox" checked /> Email updates</label><br />
+        <label><input type="checkbox" /> SMS alerts</label>
+      </section>
+
+      <section class="section-card">
+        <h2>Weekly Digest</h2>
+        <p id="digestBox" class="small">Set your alert preferences to receive personalized weekly digest updates.</p>
+      </section>
+    </main>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

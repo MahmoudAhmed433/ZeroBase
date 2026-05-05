@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Training Programs | ZeroBase</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a class="active" href="browse.html">Browse</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="verify.html">Verify Record</a>
+        </nav>
+        <div class="toolbar"><span class="small">Compare: <strong id="compareCount">0</strong></span></div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="section-card">
+        <h1>Browse All Training Programs</h1>
+        <div class="filters">
+          <input id="searchInput" placeholder="Search by keyword or company..." />
+          <select id="cityFilter"><option value="">All Cities</option><option>Cairo</option><option>Giza</option><option>Alexandria</option><option>Mansoura</option><option>Aswan</option><option>Tanta</option></select>
+          <select id="categoryFilter"><option value="">All Categories</option><option>AI</option><option>Web Development</option><option>Cybersecurity</option><option>Data Analysis</option><option>Cloud</option><option>Mobile</option></select>
+          <label class="small"><input type="checkbox" id="verifiedFilter" /> Verified companies only</label>
+          <select id="durationFilter"><option value="">Any Duration</option><option value="short">Up to 8 weeks</option><option value="long">More than 8 weeks</option></select>
+          <select id="priceFilter"><option value="">Free & Paid</option><option value="Free">Free</option><option value="Paid">Paid</option></select>
+          <select id="sortFilter"><option value="newest">Sort: Newest</option><option value="deadline">Sort: Deadline</option><option value="trust">Sort: Highest Trust Score</option></select>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <div id="browseBoard" class="board"></div>
+      </section>
+
+      <section class="section-card">
+        <h2>Compare Selected Programs</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Program</th><th>Duration</th><th>Price</th><th>Location</th><th>Trust</th><th>Seats</th><th>Deadline</th></tr></thead>
+            <tbody id="compareTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

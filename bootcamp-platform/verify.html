@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Training Record Verification | ZeroBase</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Browse</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a class="active" href="verify.html">Verify Record</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="section-card">
+        <h1>Training Record Verification</h1>
+        <p class="small">This page verifies public training records. It is not a certificate page.</p>
+        <form id="verifyForm" class="filters">
+          <input id="verificationId" placeholder="Enter verification ID (e.g. VR-11001)" required />
+          <button type="submit">Verify</button>
+        </form>
+      </section>
+      <section class="section-card" id="verifyResult">
+        <p class="small">Enter a verification ID to see student and program record status.</p>
+      </section>
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Training Program Details | ZeroBase</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Browse</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="verify.html">Verify Record</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="section-card" id="programDetails"></section>
+      <section class="section-card grid-2">
+        <div>
+          <h2>Map Preview</h2>
+          <iframe id="mapFrame" title="Program location map preview" width="100%" height="280" loading="lazy"></iframe>
+        </div>
+        <div>
+          <h2>Q&A</h2>
+          <ul id="qaList" class="list"></ul>
+          <textarea placeholder="Ask your question (UI mock only)"></textarea>
+          <button style="margin-top: 8px">Post Question</button>
+        </div>
+      </section>
+    </main>
+
+    <div id="reportModal" class="modal">
+      <div class="modal-content">
+        <h3>Report Program</h3>
+        <p class="small">Help keep the board safe and trustworthy.</p>
+        <label><input type="radio" name="reason" checked /> Scam / fake program</label><br />
+        <label><input type="radio" name="reason" /> Wrong information</label><br />
+        <label><input type="radio" name="reason" /> Bad behavior</label><br />
+        <label><input type="radio" name="reason" /> Unsafe location</label><br />
+        <label><input type="radio" name="reason" /> Other</label><br />
+        <div class="card-actions" style="margin-top: 12px">
+          <button id="submitReport">Submit Report</button>
+          <button id="closeReport" class="btn-outline">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

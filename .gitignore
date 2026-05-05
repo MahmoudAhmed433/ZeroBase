@@ -1,0 +1,6 @@
+node_modules/
+Frontend/node_modules/
+dist/
+build/
+.env
+.env.local

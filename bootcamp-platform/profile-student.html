@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Profile | ZeroBase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Browse</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="verify.html">Verify Record</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="section-card profile-hero" id="studentProfileRoot">
+        <div id="studentAvatar" class="profile-avatar" aria-hidden="true">?</div>
+        <img id="studentAvatarImg" class="profile-avatar hidden" alt="Profile picture" width="96" height="96" />
+        <div style="flex: 1">
+          <h1 class="auth-title" style="margin: 0" id="studentDisplayName">Loading…</h1>
+          <p class="small" id="studentHandle"></p>
+          <p class="small" id="studentEmail"></p>
+          <p id="studentBio" style="margin-top: 10px"></p>
+          <div class="tag-row" id="skillTags"></div>
+          <div class="card-actions" style="margin-top: 14px">
+            <a class="btn" href="settings.html">Account Settings</a>
+            <a class="btn-outline" href="change-password.html">Change Password</a>
+            <a class="btn-outline" href="index.html">Back to Home</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/zb-api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/profile-student.js"></script>
+  </body>
+</html>

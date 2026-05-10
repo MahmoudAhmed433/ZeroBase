@@ -4,3 +4,9 @@ dist/
 build/
 .env
 .env.local
+
+# Python / Django
+__pycache__/
+*.py[cod]
+backend/db.sqlite3
+*.sqlite3

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Settings | ZeroBase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Browse</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="verify.html">Verify Record</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1 class="auth-title">Account Settings</h1>
+      <p class="small">Manage your profile and security in one place.</p>
+
+      <div class="settings-tabs" id="settingsTabs">
+        <button type="button" class="active" data-tab="profile">Profile</button>
+        <button type="button" data-tab="security">Security</button>
+        <button type="button" class="hidden" data-tab="posts" id="tabCompanyPosts">Posts</button>
+      </div>
+
+      <section id="panelProfile" class="section-card">
+        <h2>Profile information</h2>
+        <div id="studentFields" class="hidden filters">
+          <label class="small" for="sfFull">Full name</label>
+          <input id="sfFull" />
+          <label class="small" for="sfUser">Username (3–32: a–z, 0–9, _)</label>
+          <input id="sfUser" />
+          <label class="small" for="sfBio">Bio</label>
+          <textarea id="sfBio" placeholder="Short bio (optional)"></textarea>
+          <label class="small" for="sfPic">Profile picture URL</label>
+          <input id="sfPic" type="url" placeholder="https://..." />
+          <label class="small" for="sfUni">University (optional)</label>
+          <input id="sfUni" />
+          <label class="small" for="sfMajor">Major (optional)</label>
+          <input id="sfMajor" />
+          <label class="small" for="sfSkills">Skills (comma-separated)</label>
+          <input id="sfSkills" placeholder="Python, SQL, …" />
+        </div>
+        <div id="companyFields" class="hidden filters">
+          <label class="small" for="cfName">Company name</label>
+          <input id="cfName" />
+          <label class="small" for="cfLogo">Logo URL</label>
+          <input id="cfLogo" type="url" />
+          <label class="small" for="cfWeb">Website</label>
+          <input id="cfWeb" type="url" />
+          <label class="small" for="cfInd">Industry</label>
+          <input id="cfInd" list="industryList" />
+          <datalist id="industryList">
+            <option value="Software"></option>
+            <option value="Finance"></option>
+            <option value="Education"></option>
+            <option value="Healthcare"></option>
+            <option value="Manufacturing"></option>
+          </datalist>
+          <label class="small" for="cfSize">Company size</label>
+          <select id="cfSize">
+            <option>1-10</option>
+            <option>11-50</option>
+            <option>51-200</option>
+            <option>200+</option>
+          </select>
+          <label class="small" for="cfDesc">Description</label>
+          <textarea id="cfDesc"></textarea>
+        </div>
+        <p id="profileSaveMsg" class="small"></p>
+        <button type="button" id="btnSaveProfile">Save changes</button>
+      </section>
+
+      <section id="panelSecurity" class="section-card hidden">
+        <h2>Security</h2>
+        <p class="small">Update your password regularly. Sessions are invalidated after a successful password change.</p>
+        <div class="card-actions">
+          <a class="btn" href="change-password.html">Change password</a>
+        </div>
+        <h3 style="margin-top: 24px">Danger zone</h3>
+        <p class="small">Permanently delete your account and all associated data.</p>
+        <button type="button" id="btnDeleteAccount" class="btn-outline" style="border-color: var(--danger); color: var(--danger)">
+          Delete account
+        </button>
+        <p id="deleteMsg" class="small"></p>
+      </section>
+
+      <section id="panelPosts" class="section-card hidden">
+        <h2>Your posts</h2>
+        <p class="small">Draft vs published status. Use the dashboard to create new posts.</p>
+        <ul id="settingsPostList" class="list"></ul>
+        <a class="btn" href="dashboard.html">Go to dashboard</a>
+      </section>
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/zb-api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/settings-page.js"></script>
+  </body>
+</html>

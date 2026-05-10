@@ -350,6 +350,335 @@ td {
   color: var(--muted);
 }
 
+.auth-page {
+  min-height: calc(100vh - 72px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: min(640px, 100%);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.auth-step {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
+.auth-card-enhanced h1.auth-heading {
+  margin: 0 0 6px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+}
+
+.auth-title {
+  margin: 0 0 4px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+}
+
+.auth-tagline {
+  margin: 0 0 8px;
+}
+
+.auth-landing-actions {
+  flex-wrap: wrap;
+}
+
+.auth-progress {
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.12);
+}
+
+.auth-progress-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-progress-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  color: var(--muted);
+}
+
+.auth-progress-dot.active {
+  border-color: var(--accent);
+  background: rgba(47, 126, 230, 0.12);
+  color: var(--accent);
+}
+
+.auth-progress-dot.done {
+  border-color: var(--success);
+  background: rgba(15, 157, 88, 0.15);
+  color: var(--success);
+}
+
+.auth-progress-line {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.auth-progress-label {
+  margin: 8px 0 0;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+button.role-card {
+  text-align: left;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.55);
+  display: grid;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.role-card strong {
+  font-size: 1rem;
+}
+
+.role-card-desc {
+  line-height: 1.35;
+}
+
+button.role-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.role-card-icon {
+  font-size: 1.25rem;
+  color: var(--accent);
+}
+
+.auth-password-wrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.auth-toggle-pass {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(47, 126, 230, 0.35);
+  padding: 8px 10px;
+}
+
+.auth-switch {
+  margin: 12px 0 0;
+}
+
+.auth-link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+.auth-message {
+  margin-top: 14px;
+  min-height: 1.2em;
+}
+
+.auth-trust {
+  width: min(900px, 92%);
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+
+.auth-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.auth-trust-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.auth-trust-item .small {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+body.dark .auth-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+body.dark .role-card {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+body.dark .auth-progress-dot {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark .auth-progress-line {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+body.dark .auth-trust-item {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.profile-nav-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.nav-auth-guest.hidden {
+  display: none !important;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.user-avatar {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 220px;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 8px 0;
+  z-index: 50;
+}
+
+.user-menu-dropdown a,
+.user-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  font: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.user-menu-dropdown a:hover,
+.user-menu-item:hover {
+  background: rgba(47, 126, 230, 0.1);
+}
+
+.settings-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+.settings-tabs button {
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.settings-tabs button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.profile-hero {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: rgba(47, 126, 230, 0.15);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  border: 3px solid rgba(47, 126, 230, 0.35);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
 @media (max-width: 860px) {
   .program-card.featured {
     grid-column: auto;

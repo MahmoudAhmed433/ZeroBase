@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authentication | ZeroBase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Browse</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a class="active" href="auth.html">Login / Sign Up</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="auth-page">
+      <section class="auth-card auth-card-enhanced">
+        <div id="authLanding">
+          <h1 class="auth-heading">Welcome to ZeroBase</h1>
+          <p class="small auth-tagline">Find opportunities or share them — fast and clear.</p>
+          <div class="card-actions auth-landing-actions">
+            <button id="openSignup" type="button">Sign up</button>
+            <button id="openLogin" type="button" class="btn-outline">Log in</button>
+          </div>
+        </div>
+
+        <div id="signupPanel" class="hidden">
+          <div id="authProgress" class="auth-progress" aria-hidden="true">
+            <div class="auth-progress-steps">
+              <span id="progStep1" class="auth-progress-dot active">1</span>
+              <span class="auth-progress-line"></span>
+              <span id="progStep2" class="auth-progress-dot">2</span>
+            </div>
+            <p id="progLabel" class="small auth-progress-label">Step 1 of 2 — Choose account type</p>
+          </div>
+
+          <div id="roleStep" class="auth-step">
+            <h2 class="auth-title">Create your account</h2>
+            <p class="small">Choose how you want to join ZeroBase.</p>
+            <div class="role-grid">
+              <button type="button" id="chooseStudent" class="role-card">
+                <span class="role-card-icon" aria-hidden="true">◎</span>
+                <strong>I'm a Student</strong>
+                <span class="small role-card-desc">Find jobs, internships, and training fits.</span>
+              </button>
+              <button type="button" id="chooseCompany" class="role-card">
+                <span class="role-card-icon" aria-hidden="true">▣</span>
+                <strong>I'm a Company</strong>
+                <span class="small role-card-desc">Publish roles and reach student talent.</span>
+              </button>
+            </div>
+            <p class="auth-switch small">
+              Already have an account?
+              <button type="button" id="landingToLogin" class="auth-link-btn">Log in</button>
+            </p>
+            <p class="small" style="margin-top: 4px">
+              <button type="button" id="signupCancel" class="auth-link-btn">← Back to welcome</button>
+            </p>
+          </div>
+
+          <form id="studentForm" class="auth-step hidden">
+            <h2 class="auth-title">Student sign up</h2>
+            <p class="small">Create your student profile — minimal and quick.</p>
+            <label class="small" for="studentUsername">Username</label>
+            <input id="studentUsername" name="username" autocomplete="username" placeholder="Username" required />
+            <label class="small" for="studentEmail">Email</label>
+            <input id="studentEmail" type="email" autocomplete="email" placeholder="Email address" required />
+            <label class="small" for="studentPassword">Password</label>
+            <div class="auth-password-wrap">
+              <input id="studentPassword" type="password" autocomplete="new-password" placeholder="Password" required />
+              <button type="button" class="auth-toggle-pass" data-target="studentPassword" aria-label="Show password">Show</button>
+            </div>
+            <div class="card-actions">
+              <button type="submit">Continue</button>
+              <button type="button" id="studentBack" class="btn-outline">Back</button>
+            </div>
+            <p class="auth-switch small">
+              Already have an account?
+              <button type="button" class="auth-link-btn to-login-auth">Log in</button>
+            </p>
+          </form>
+
+          <form id="companyForm" class="auth-step hidden">
+            <h2 class="auth-title">Company sign up</h2>
+            <p class="small">Tell us what we need — nothing extra.</p>
+            <label class="small" for="companyName">Company name</label>
+            <input id="companyName" autocomplete="organization" placeholder="Company name" required />
+            <label class="small" for="companyEmail">Email</label>
+            <input id="companyEmail" type="email" autocomplete="email" placeholder="Work email" required />
+            <label class="small" for="companyPassword">Password</label>
+            <div class="auth-password-wrap">
+              <input id="companyPassword" type="password" autocomplete="new-password" placeholder="Password" required />
+              <button type="button" class="auth-toggle-pass" data-target="companyPassword" aria-label="Show password">Show</button>
+            </div>
+            <label class="small" for="companyIndustry">Industry</label>
+            <select id="companyIndustry" required>
+              <option value="">Select industry</option>
+              <option>Software</option>
+              <option>Finance</option>
+              <option>Education</option>
+              <option>Healthcare</option>
+              <option>Manufacturing</option>
+              <option>Other</option>
+            </select>
+            <label class="small" for="companySize">Company size</label>
+            <select id="companySize" required>
+              <option value="">Select size</option>
+              <option>1-10</option>
+              <option>11-50</option>
+              <option>51-200</option>
+              <option>200+</option>
+            </select>
+            <label class="small" for="companyWebsite">Website <span class="small">(optional)</span></label>
+            <input id="companyWebsite" type="url" autocomplete="url" placeholder="https://" />
+            <label class="small" for="companyDescription">Description</label>
+            <textarea id="companyDescription" placeholder="Briefly describe what you do" required></textarea>
+            <div class="card-actions">
+              <button type="submit">Continue</button>
+              <button type="button" id="companyBack" class="btn-outline">Back</button>
+            </div>
+            <p class="auth-switch small">
+              Already have an account?
+              <button type="button" class="auth-link-btn to-login-auth">Log in</button>
+            </p>
+          </form>
+        </div>
+
+        <div id="loginPanel" class="hidden">
+          <h2 class="auth-title">Welcome back</h2>
+          <p class="small">Log in with your ZeroBase credentials.</p>
+          <form id="loginForm" class="auth-step">
+            <label class="small" for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" autocomplete="email" placeholder="Email address" required />
+            <label class="small" for="loginPassword">Password</label>
+            <div class="auth-password-wrap">
+              <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required />
+              <button type="button" class="auth-toggle-pass" data-target="loginPassword" aria-label="Show password">Show</button>
+            </div>
+            <button type="submit">Log in</button>
+            <button type="button" id="loginBack" class="btn-outline">Back</button>
+          </form>
+          <p class="auth-switch small">
+            Don't have an account?
+            <button type="button" id="landingToSignup" class="auth-link-btn">Sign up</button>
+          </p>
+        </div>
+
+        <p id="authMessage" class="small auth-message" role="status"></p>
+      </section>
+
+      <section class="auth-trust" aria-label="Platform highlights">
+        <div class="auth-trust-grid">
+          <div class="auth-trust-item"><span aria-hidden="true">🛡</span><strong>Secure</strong><span class="small">Protected sign-in flow</span></div>
+          <div class="auth-trust-item"><span aria-hidden="true">◆</span><strong>Opportunities</strong><span class="small">Jobs, internships &amp; training</span></div>
+          <div class="auth-trust-item"><span aria-hidden="true">◎</span><strong>Companies</strong><span class="small">Clear company profiles</span></div>
+          <div class="auth-trust-item"><span aria-hidden="true">⚡</span><strong>Fast</strong><span class="small">Step-based onboarding</span></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/zb-api.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

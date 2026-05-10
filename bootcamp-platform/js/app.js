@@ -20,11 +20,29 @@ const state = {
   location: storage.get("selectedLocation", ""),
   soundEnabled: storage.get("soundEnabled", false),
   darkMode: storage.get("darkMode", false),
-  compare: storage.get("comparePrograms", [])
+  compare: storage.get("comparePrograms", []),
+  auth: storage.get("authUser", null),
+  accessToken: storage.get("accessToken", null),
+  csrfToken: null
 };
+
+let remotePrograms = [];
 
 function getCompany(companyId) {
   return companies.find((c) => c.id === companyId);
+}
+
+function companyFromProgram(program) {
+  if (program.company) {
+    return {
+      id: program.company.id,
+      name: program.company.name || "Company",
+      logo: program.company.logo || "CO",
+      verified: true,
+      trustScore: 80
+    };
+  }
+  return getCompany(program.companyId);
 }
 
 function deadlineLeft(deadline) {
@@ -50,11 +68,44 @@ function mockSound(type) {
   osc.stop(ctx.currentTime + 0.08);
 }
 
+/** Home/Browse/Compare/Dashboard use `programs` from data.js (full card layout). `remotePrograms` is filled from the API for future features only. */
+function getProgramsSource() {
+  return programs;
+}
+
+async function apiRequest(path, options = {}) {
+  if (!window.ZB) throw new Error("ZB API not loaded");
+  return window.ZB.apiRequest(path, options);
+}
+
+async function ensureCsrf() {
+  if (!window.ZB) throw new Error("ZB API not loaded");
+  const t = await window.ZB.ensureCsrf();
+  state.csrfToken = t;
+  return t;
+}
+
+function saveAuth(data) {
+  state.auth = data.user;
+  state.accessToken = data.access_token;
+  storage.set("authUser", state.auth);
+  storage.set("accessToken", state.accessToken);
+}
+
+function clearAuth() {
+  state.auth = null;
+  state.accessToken = null;
+  storage.set("authUser", null);
+  storage.set("accessToken", null);
+}
+
 function cardMarkup(program) {
-  const company = getCompany(program.companyId);
-  const isSaved = state.saved.includes(program.id);
-  const isCompared = state.compare.includes(program.id);
-  const rot = (parseInt(program.id.replace("p", ""), 10) % 2 ? -1.8 : 1.2) + "deg";
+  const company = companyFromProgram(program);
+  const pid = String(program.id);
+  const isSaved = state.saved.some((x) => String(x) === pid);
+  const isCompared = state.compare.some((x) => String(x) === pid);
+  const idNum = parseInt(pid.replace(/^p/i, ""), 10) || 0;
+  const rot = (idNum % 2 ? -1.8 : 1.2) + "deg";
   return `
     <article class="program-card ${program.featured ? "featured" : ""}" style="--rot:${rot}">
       <span class="pin" aria-hidden="true"></span>
@@ -64,9 +115,9 @@ function cardMarkup(program) {
       </div>
       <h3>${program.title}</h3>
       <div class="badges">
-        <span class="badge">${program.category}</span>
-        <span class="badge">${program.durationWeeks} weeks</span>
-        <span class="badge">${program.priceType}</span>
+        <span class="badge">${program.category || program.type || "Program"}</span>
+        <span class="badge">${program.durationWeeks || 8} weeks</span>
+        <span class="badge">${program.priceType || (program.salary ? "Paid" : "Flexible")}</span>
         ${company.verified ? '<span class="badge success">Verified Company</span>' : ""}
       </div>
       <p class="small">Deadline: ${deadlineLeft(program.deadline)}</p>
@@ -75,9 +126,9 @@ function cardMarkup(program) {
         <div class="trust-bar"><span style="width:${company.trustScore}%"></span></div>
       </div>
       <div class="card-actions">
-        <a class="btn" href="program.html?id=${program.id}">View Program</a>
-        <button class="btn-outline save-btn" data-id="${program.id}">${isSaved ? "Saved" : "Save"}</button>
-        <button class="btn-outline compare-btn" data-id="${program.id}">${isCompared ? "Comparing" : "Compare"}</button>
+        <a class="btn" href="program.html?id=${encodeURIComponent(pid)}">View Program</a>
+        <button class="btn-outline save-btn" data-id="${pid}">${isSaved ? "Saved" : "Save"}</button>
+        <button class="btn-outline compare-btn" data-id="${pid}">${isCompared ? "Comparing" : "Compare"}</button>
       </div>
     </article>
   `;
@@ -151,27 +202,27 @@ function bindCardActions() {
 function renderCompareTable() {
   const box = $("#compareTableBody");
   if (!box) return;
-  const selected = programs.filter((p) => state.compare.includes(p.id));
+  const selected = getProgramsSource().filter((p) => state.compare.includes(p.id));
   box.innerHTML = "";
   selected.forEach((p) => {
-    const company = getCompany(p.companyId);
+    const company = companyFromProgram(p);
     box.insertAdjacentHTML(
       "beforeend",
-      `<tr><td>${p.title}</td><td>${p.durationWeeks} weeks</td><td>${p.priceType}</td><td>${p.city}</td><td>${company.trustScore}</td><td>${p.seats}</td><td>${deadlineLeft(p.deadline)}</td></tr>`
+      `<tr><td>${p.title}</td><td>${p.durationWeeks || 8} weeks</td><td>${p.priceType || "Flexible"}</td><td>${p.city || p.location || "Remote"}</td><td>${company.trustScore || 80}</td><td>${p.seats || "N/A"}</td><td>${deadlineLeft(p.deadline || new Date().toISOString())}</td></tr>`
     );
   });
 }
 
 function renderHome() {
   if (!$("#homeBoard")) return;
-  const sorted = [...programs].sort((a, b) => (a.featured === b.featured ? 0 : a.featured ? -1 : 1));
+  const sorted = [...getProgramsSource()].sort((a, b) => (a.featured === b.featured ? 0 : a.featured ? -1 : 1));
   renderBoard("homeBoard", sorted.slice(0, 6));
 
   const nearYou = state.location ? sorted.filter((p) => p.city === state.location) : sorted.slice(0, 3);
   renderBoard("nearYouBoard", nearYou.slice(0, 3));
 
   const weekly = [...sorted]
-    .sort((a, b) => getCompany(b.companyId).trustScore - getCompany(a.companyId).trustScore)
+    .sort((a, b) => companyFromProgram(b).trustScore - companyFromProgram(a).trustScore)
     .slice(0, 3);
   renderBoard("weeklyBoard", weekly);
 }
@@ -185,9 +236,12 @@ function applyBrowseFilters() {
   const price = $("#priceFilter")?.value || "";
   const sortBy = $("#sortFilter")?.value || "newest";
 
-  let list = programs.filter((p) => {
-    const c = getCompany(p.companyId);
-    const matchesKeyword = !keyword || p.title.toLowerCase().includes(keyword) || c.name.toLowerCase().includes(keyword);
+  let list = getProgramsSource().filter((p) => {
+    const c = companyFromProgram(p);
+    const matchesKeyword =
+      !keyword ||
+      p.title.toLowerCase().includes(keyword) ||
+      (c.name || "").toLowerCase().includes(keyword);
     const matchesCity = !city || p.city === city;
     const matchesCategory = !category || p.category === category;
     const matchesVerified = !verifiedOnly || c.verified;
@@ -197,7 +251,7 @@ function applyBrowseFilters() {
   });
 
   if (sortBy === "deadline") list.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-  if (sortBy === "trust") list.sort((a, b) => getCompany(b.companyId).trustScore - getCompany(a.companyId).trustScore);
+    if (sortBy === "trust") list.sort((a, b) => companyFromProgram(b).trustScore - companyFromProgram(a).trustScore);
   if (sortBy === "newest") list.sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt));
 
   renderBoard("browseBoard", list);
@@ -214,31 +268,32 @@ function renderBrowse() {
 function renderProgram() {
   if (!$("#programDetails")) return;
   const id = new URLSearchParams(location.search).get("id");
-  const program = programs.find((p) => p.id === id) || programs[0];
-  const company = getCompany(program.companyId);
+  const source = getProgramsSource();
+  const program = source.find((p) => String(p.id) === String(id)) || source[0];
+  const company = companyFromProgram(program);
   $("#programDetails").innerHTML = `
     <h1>${program.title}</h1>
-    <p>${program.description}</p>
+    <p>${program.description || "No description provided yet."}</p>
     <div class="badges">
-      <span class="badge">${program.category}</span>
-      <span class="badge">${program.city}</span>
-      <span class="badge">${program.durationWeeks} weeks</span>
+      <span class="badge">${program.category || program.type || "Program"}</span>
+      <span class="badge">${program.city || program.location || "Remote"}</span>
+      <span class="badge">${program.durationWeeks || 8} weeks</span>
       ${company.verified ? '<span class="badge success">Verified Company</span>' : ""}
     </div>
     <p><strong>Company:</strong> <a href="company.html?id=${company.id}">${company.name}</a></p>
-    <p><strong>Schedule:</strong> ${program.schedule}</p>
-    <p><strong>Location:</strong> ${program.locationText}</p>
-    <p><strong>Seats:</strong> ${program.seats}</p>
+    <p><strong>Schedule:</strong> ${program.schedule || "To be announced"}</p>
+    <p><strong>Location:</strong> ${program.locationText || program.location || "Not specified"}</p>
+    <p><strong>Seats:</strong> ${program.seats || "N/A"}</p>
     <p><strong>Deadline:</strong> ${deadlineLeft(program.deadline)}</p>
     <h3>Required Skills</h3>
-    <ul>${program.requiredSkills.map((s) => `<li>${s}</li>`).join("")}</ul>
+    <ul>${(program.requiredSkills || program.tags || []).map((s) => `<li>${s}</li>`).join("")}</ul>
     <div class="card-actions">
       <button id="applyBtn" class="btn">${state.applied.includes(program.id) ? "Applied" : "Apply"}</button>
       <button id="saveProgramBtn" class="btn-outline">${state.saved.includes(program.id) ? "Saved" : "Save"}</button>
       <button id="reportBtn" class="btn-outline">Report</button>
     </div>
   `;
-  $("#mapFrame").src = program.mapEmbed;
+  $("#mapFrame").src = program.mapEmbed || "https://maps.google.com/maps?q=cairo&t=&z=12&ie=UTF8&iwloc=&output=embed";
 
   const qa = questionsMock[program.id] || [];
   $("#qaList").innerHTML = qa.map((q) => `<li><strong>${q.by}:</strong> ${q.text}<br><span class="small">Company reply: ${q.reply}</span></li>`).join("");
@@ -290,10 +345,99 @@ function renderCompany() {
 
 function renderDashboard() {
   if (!$("#savedList")) return;
-  const saved = programs.filter((p) => state.saved.includes(p.id));
-  const applied = programs.filter((p) => state.applied.includes(p.id));
-  $("#savedList").innerHTML = saved.map((p) => `<li>${p.title} - ${p.city}</li>`).join("") || "<li>No saved programs yet.</li>";
-  $("#applicationsList").innerHTML = applied.map((p) => `<li>${p.title} - Application sent</li>`).join("") || "<li>No applications yet.</li>";
+  if (!state.auth) {
+    location.href = "auth.html";
+    return;
+  }
+  const dashboardTitle = $("title");
+  if (dashboardTitle) {
+    dashboardTitle.textContent = state.auth.role === "company" ? "Company Dashboard | ZeroBase" : "Student Dashboard | ZeroBase";
+  }
+  const source = getProgramsSource();
+  const saved = source.filter((p) => state.saved.includes(p.id));
+  const applied = source.filter((p) => state.applied.includes(p.id));
+  if (state.auth.role === "student") {
+    $("#savedList").innerHTML = saved.map((p) => `<li>${p.title} - ${p.city || p.location}</li>`).join("") || "<li>No saved programs yet.</li>";
+    $("#applicationsList").innerHTML = applied.map((p) => `<li>${p.title} - Application sent</li>`).join("") || "<li>No applications yet.</li>";
+  } else {
+    $("#savedList").innerHTML = "<li>Company account: saved list is student-only.</li>";
+    $("#applicationsList").innerHTML = `
+      <li>
+        <strong>Create Post (Draft)</strong><br/>
+        <input id="postTitle" placeholder="Post title" style="margin-top:6px"/>
+        <input id="postType" placeholder="Type: job/internship/training" style="margin-top:6px"/>
+        <input id="postLocation" placeholder="Location" style="margin-top:6px"/>
+        <textarea id="postDesc" placeholder="Description" style="margin-top:6px"></textarea>
+        <textarea id="postReq" placeholder="Requirements" style="margin-top:6px"></textarea>
+        <input id="postTags" placeholder="Tags comma separated" style="margin-top:6px"/>
+        <button id="createPostBtn" style="margin-top:8px">Save Draft</button>
+        <button id="payPublishBtn" class="btn-outline" style="margin-top:8px">Pay $15 and Publish</button>
+        <p id="companyPostMsg" class="small"></p>
+        <ul id="companyPostsList" class="list" style="margin-top:10px"></ul>
+      </li>
+    `;
+    let draftPostId = null;
+    const renderCompanyPosts = async () => {
+      try {
+        const listResp = await apiRequest("/company/posts/");
+        $("#companyPostsList").innerHTML = (listResp.items || [])
+          .map(
+            (p) =>
+              `<li>${p.title} — ${p.type} — ${p.payment_status.toUpperCase()} — ${
+                p.is_published ? "Published" : "Draft"
+              }</li>`
+          )
+          .join("") || "<li>No posts yet.</li>";
+      } catch {
+        $("#companyPostsList").innerHTML = "<li>Could not load company posts.</li>";
+      }
+    };
+    $("#createPostBtn")?.addEventListener("click", async () => {
+      const msg = $("#companyPostMsg");
+      try {
+        await ensureCsrf();
+        const draft = await apiRequest("/create-post/", {
+          method: "POST",
+          body: JSON.stringify({
+            title: $("#postTitle").value.trim(),
+            description: $("#postDesc").value.trim(),
+            type: ($("#postType").value || "job").trim().toLowerCase(),
+            location: $("#postLocation").value.trim(),
+            requirements: $("#postReq").value.trim(),
+            tags: ($("#postTags").value || "").split(",").map((v) => v.trim()).filter(Boolean)
+          })
+        });
+        draftPostId = draft.id;
+        msg.textContent = "Draft created. Complete payment to publish.";
+        await renderCompanyPosts();
+      } catch (err) {
+        msg.textContent = err.message;
+      }
+    });
+    $("#payPublishBtn")?.addEventListener("click", async () => {
+      const msg = $("#companyPostMsg");
+      if (!draftPostId) {
+        msg.textContent = "Create a draft first.";
+        return;
+      }
+      try {
+        await ensureCsrf();
+        await apiRequest(`/company/posts/${draftPostId}/payment/confirm/`, {
+          method: "POST",
+          body: JSON.stringify({
+            payment_status: "paid",
+            transaction_ref: `mock_tx_${Date.now()}`
+          })
+        });
+        msg.textContent = "Payment successful. Post is now published.";
+        await renderCompanyPosts();
+        await loadBackendFeed();
+      } catch (err) {
+        msg.textContent = err.message;
+      }
+    });
+    renderCompanyPosts();
+  }
 
   $("#alertsForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -316,6 +460,104 @@ function renderVerify() {
   });
 }
 
+function ensureNavAuthLink() {
+  const nav = $(".nav-links");
+  if (!nav || $("#navAuthGuestLink")) return;
+  nav.insertAdjacentHTML(
+    "beforeend",
+    '<a href="auth.html" id="navAuthGuestLink" class="nav-auth-guest">Login / Sign Up</a>'
+  );
+}
+
+function mountProfileNavSlot() {
+  const host = $(".toolbar") || $(".nav-wrap");
+  if (!host || $("#profileNavSlot")) return;
+  host.insertAdjacentHTML("beforeend", '<div id="profileNavSlot" class="profile-nav-slot"></div>');
+}
+
+if (!window._zbUserMenuOutsideBound) {
+  window._zbUserMenuOutsideBound = true;
+  document.addEventListener("click", () => {
+    $("#userMenuDropdown")?.classList.add("hidden");
+    $("#userMenuTrigger")?.setAttribute("aria-expanded", "false");
+  });
+}
+
+function bindUserMenu() {
+  const trigger = $("#userMenuTrigger");
+  const menu = $("#userMenuDropdown");
+  if (!trigger || !menu) return;
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.classList.toggle("hidden");
+    trigger.setAttribute("aria-expanded", String(!menu.classList.contains("hidden")));
+  });
+  menu.addEventListener("click", (e) => e.stopPropagation());
+  $("#menuLogout")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      await ensureCsrf();
+      await apiRequest("/auth/logout/", { method: "POST" });
+    } catch {}
+    clearAuth();
+    syncSessionStatus();
+    location.href = "index.html";
+  });
+}
+
+function syncSessionStatus() {
+  const guest = $("#navAuthGuestLink");
+  const slot = $("#profileNavSlot");
+  if (slot) {
+    if (state.auth && state.accessToken) {
+      const role = state.auth.role;
+      const initial = ((role === "company" ? state.auth.email : state.auth.email) || "?").charAt(0).toUpperCase();
+      const profileHref = role === "company" ? "profile-company.html" : "profile-student.html";
+      slot.innerHTML = `
+        <div class="user-menu" id="userMenu">
+          <button type="button" class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+            <span class="user-avatar">${initial}</span>
+          </button>
+          <div class="user-menu-dropdown hidden" id="userMenuDropdown" role="menu">
+            <a href="${profileHref}" role="menuitem">View Profile</a>
+            <a href="settings.html" role="menuitem">Account Settings</a>
+            <a href="change-password.html" role="menuitem">Change Password</a>
+            <button type="button" class="user-menu-item" id="menuLogout" role="menuitem">Logout</button>
+          </div>
+        </div>`;
+      bindUserMenu();
+      if (guest) guest.classList.add("hidden");
+    } else {
+      slot.innerHTML = "";
+      if (guest) guest.classList.remove("hidden");
+    }
+  }
+}
+
+async function loadBackendFeed() {
+  if (!state.accessToken) return;
+  try {
+    const data = await apiRequest("/home/?page=1&page_size=30");
+    remotePrograms = (data.items || []).map((item) => ({
+      id: String(item.id),
+      company: item.company,
+      title: item.title,
+      category: item.type,
+      type: item.type,
+      city: item.location,
+      location: item.location,
+      description: item.description,
+      requiredSkills: item.tags || [],
+      tags: item.tags || [],
+      postedAt: item.created_at,
+      deadline: item.created_at,
+      featured: item.is_featured
+    }));
+  } catch {
+    remotePrograms = [];
+  }
+}
+
 function initSkeletonThenRender() {
   const board = $("#homeBoard, #browseBoard");
   if (!board) return;
@@ -332,6 +574,9 @@ function initSkeletonThenRender() {
 
 document.addEventListener("DOMContentLoaded", () => {
   bindCommon();
+  ensureNavAuthLink();
+  mountProfileNavSlot();
+  syncSessionStatus();
   bindCardActions();
   bindReportModal();
   initSkeletonThenRender();
@@ -340,4 +585,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCompany();
   renderDashboard();
   renderVerify();
+  loadBackendFeed();
 });

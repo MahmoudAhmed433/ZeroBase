@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Profile | ZeroBase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">ZeroBase Board</div>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="browse.html">Browse</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="verify.html">Verify Record</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="section-card profile-hero" id="companyProfileRoot">
+        <div id="companyLogoPh" class="profile-avatar" aria-hidden="true">Co</div>
+        <img id="companyLogoImg" class="profile-avatar hidden" alt="Company logo" width="96" height="96" />
+        <div style="flex: 1">
+          <h1 class="auth-title" style="margin: 0" id="companyName">Loading…</h1>
+          <p class="small" id="companyEmail"></p>
+          <div class="badges" style="margin-top: 8px">
+            <span class="badge" id="companyIndustry"></span>
+            <span class="badge" id="companySize"></span>
+            <span class="badge" id="companyVerified"></span>
+          </div>
+          <p id="companyDesc" style="margin-top: 12px"></p>
+          <p class="small" id="companyWebsite"></p>
+          <div class="card-actions" style="margin-top: 14px">
+            <a class="btn" href="settings.html">Account Settings</a>
+            <a class="btn-outline" href="change-password.html">Change Password</a>
+            <a class="btn-outline" href="dashboard.html">Dashboard</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h2>Company posts</h2>
+        <p class="small">Published posts appear in the home feed after payment. Drafts stay private.</p>
+        <ul id="companyPostsDetail" class="list"></ul>
+      </section>
+    </main>
+
+    <script src="js/data.js"></script>
+    <script src="js/zb-api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/profile-company.js"></script>
+  </body>
+</html>
